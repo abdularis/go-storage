@@ -12,7 +12,7 @@ import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
 
-const ossSignedURLExpire = 24 * time.Hour // 1 Day
+const ossSignedURLExpire = 1 * time.Minute // 1 Minute
 
 type storageAlibabaOSS struct {
 	client *oss.Client
@@ -96,7 +96,8 @@ func (s *storageAlibabaOSS) TemporaryURL(objectPath string, expireIn time.Durati
 		expireIn = ossSignedURLExpire
 	}
 
-	return s.bucket.SignURL(objectPath, oss.HTTPGet, int64(expireIn))
+	expireInSec := int64(expireIn / time.Second)
+	return s.bucket.SignURL(objectPath, oss.HTTPGet, expireInSec)
 }
 
 func (s *storageAlibabaOSS) Size(objectPath string) (int64, error) {

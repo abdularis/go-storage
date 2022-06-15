@@ -1,12 +1,13 @@
 package test
 
 import (
-	gostorage "github.com/commonlib-dev/go-storage"
-	"github.com/stretchr/testify/require"
 	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
+
+	gostorage "github.com/abdularis/go-storage"
+	"github.com/stretchr/testify/require"
 )
 
 func cleanTestDir() {
