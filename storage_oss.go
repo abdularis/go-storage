@@ -7,6 +7,7 @@ import (
 	"path"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
@@ -86,9 +87,9 @@ func (s *storageAlibabaOSS) URL(objectPath string) (string, error) {
 	if objectPath == "" {
 		return "", nil
 	}
-
 	objectPath = cleanOSSObjectPath(objectPath)
-	return fmt.Sprintf("https://%s.%s/%s", s.bucket.BucketName, s.bucket.GetConfig().Endpoint, objectPath), nil
+	endpoint := removeSchemeFromEndpoint(s.bucket.GetConfig().Endpoint)
+	return fmt.Sprintf("https://%s.%s/%s", s.bucket.BucketName, endpoint, objectPath), nil
 }
 
 func (s *storageAlibabaOSS) TemporaryURL(objectPath string, expireIn time.Duration) (string, error) {
@@ -164,4 +165,13 @@ func getACLOSSOrError(visibility ObjectVisibility) (oss.ACLType, error) {
 	} else {
 		return "", fmt.Errorf("err invalid object visibility: %s", visibility)
 	}
+}
+
+func removeSchemeFromEndpoint(endpoint string) string {
+	if strings.HasPrefix(endpoint, "https://") {
+		return endpoint[len("https://"):]
+	} else if strings.HasPrefix(endpoint, "http://") {
+		return endpoint[len("http://"):]
+	}
+	return endpoint
 }
